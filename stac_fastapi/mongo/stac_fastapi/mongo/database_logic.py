@@ -79,7 +79,7 @@ async def create_item_index():
                 f"An error occurred while creating indexes for collection {ITEMS_INDEX}: {e}"
             )
         finally:
-            await client.close()
+            client.close()
 
 
 def mk_item_id(item_id: str, collection_id: str):
