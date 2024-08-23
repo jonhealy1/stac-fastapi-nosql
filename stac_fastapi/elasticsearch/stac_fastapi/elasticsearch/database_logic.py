@@ -17,12 +17,16 @@ from stac_fastapi.elasticsearch.config import AsyncElasticsearchSettings
 from stac_fastapi.elasticsearch.config import (
     ElasticsearchSettings as SyncElasticsearchSettings,
 )
+from stac_fastapi.elasticsearch.config import check_serverless_elasticsearch
 from stac_fastapi.types.errors import ConflictError, NotFoundError
 from stac_fastapi.types.stac import Collection, Item
 
 logger = logging.getLogger(__name__)
 
 NumType = Union[float, int]
+
+serverless, message = check_serverless_elasticsearch()
+logger.info(message)
 
 COLLECTIONS_INDEX = os.getenv("STAC_COLLECTIONS_INDEX", "collections")
 ITEMS_INDEX_PREFIX = os.getenv("STAC_ITEMS_INDEX_PREFIX", "items_")
@@ -180,23 +184,49 @@ async def create_index_templates() -> None:
         None
 
     """
-    client = AsyncElasticsearchSettings().create_client
-    await client.indices.put_template(
-        name=f"template_{COLLECTIONS_INDEX}",
-        body={
-            "index_patterns": [f"{COLLECTIONS_INDEX}*"],
-            "mappings": ES_COLLECTIONS_MAPPINGS,
-        },
-    )
-    await client.indices.put_template(
-        name=f"template_{ITEMS_INDEX_PREFIX}",
-        body={
-            "index_patterns": [f"{ITEMS_INDEX_PREFIX}*"],
-            "settings": ES_ITEMS_SETTINGS,
-            "mappings": ES_ITEMS_MAPPINGS,
-        },
-    )
-    await client.close()
+    # https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-component-template.html
+    # no asynch is provided for index management over serverless
+    # the body also changes and the name can't start with underscode '_'
+    if serverless:
+        client = SyncElasticsearchSettings().create_client
+        client.indices.put_index_template(
+            name=f"template_{COLLECTIONS_INDEX}",
+            body={
+                "index_patterns": [f"{COLLECTIONS_INDEX}*"],
+                "template": {
+                    "mappings": ES_COLLECTIONS_MAPPINGS,
+                },
+            },
+        )
+        client.indices.put_index_template(
+            name=f"index_template_{ITEMS_INDEX_PREFIX}",
+            body={
+                "index_patterns": [f"{ITEMS_INDEX_PREFIX}*"],
+                "template": {
+                    "settings": ES_ITEMS_SETTINGS,
+                    "mappings": ES_ITEMS_MAPPINGS,
+                },
+            },
+        )
+        client.close()
+    else:
+        client = AsyncElasticsearchSettings().create_client
+        await client.indices.put_template(
+            name=f"template_{COLLECTIONS_INDEX}",
+            body={
+                "index_patterns": [f"{COLLECTIONS_INDEX}*"],
+                "mappings": ES_COLLECTIONS_MAPPINGS,
+            },
+        )
+        await client.indices.put_template(
+            name=f"template_{ITEMS_INDEX_PREFIX}",
+            body={
+                "index_patterns": [f"{ITEMS_INDEX_PREFIX}*"],
+                "settings": ES_ITEMS_SETTINGS,
+                "mappings": ES_ITEMS_MAPPINGS,
+            },
+        )
+        await client.close()
 
 
 async def create_collection_index() -> None:
@@ -207,13 +237,23 @@ async def create_collection_index() -> None:
         None
 
     """
-    client = AsyncElasticsearchSettings().create_client
+    index = f"{COLLECTIONS_INDEX}-000001"
+    if serverless:
+        client = SyncElasticsearchSettings().create_client
 
-    await client.options(ignore_status=400).indices.create(
-        index=f"{COLLECTIONS_INDEX}-000001",
-        aliases={COLLECTIONS_INDEX: {}},
-    )
-    await client.close()
+        client.options(ignore_status=400).indices.create(
+            index=index,
+            aliases={COLLECTIONS_INDEX: {}},
+        )
+        client.close()
+    else:
+        client = AsyncElasticsearchSettings().create_client
+
+        await client.options(ignore_status=400).indices.create(
+            index=index,
+            aliases={COLLECTIONS_INDEX: {}},
+        )
+        await client.close()
 
 
 async def create_item_index(collection_id: str):
@@ -227,14 +267,25 @@ async def create_item_index(collection_id: str):
         None
 
     """
-    client = AsyncElasticsearchSettings().create_client
     index_name = index_by_collection_id(collection_id)
+    index = f"{index_by_collection_id(collection_id)}-000001"
 
-    await client.options(ignore_status=400).indices.create(
-        index=f"{index_by_collection_id(collection_id)}-000001",
-        aliases={index_name: {}},
-    )
-    await client.close()
+    if serverless:
+        client = SyncElasticsearchSettings().create_client
+
+        client.options(ignore_status=400).indices.create(
+            index=index,
+            aliases={index_name: {}},
+        )
+        client.close()
+    else:
+        client = AsyncElasticsearchSettings().create_client
+
+        await client.options(ignore_status=400).indices.create(
+            index=index,
+            aliases={index_name: {}},
+        )
+        await client.close()
 
 
 async def delete_item_index(collection_id: str):
@@ -243,17 +294,32 @@ async def delete_item_index(collection_id: str):
     Args:
         collection_id (str): The ID of the collection whose items index will be deleted.
     """
-    client = AsyncElasticsearchSettings().create_client
-
     name = index_by_collection_id(collection_id)
-    resolved = await client.indices.resolve_index(name=name)
-    if "aliases" in resolved and resolved["aliases"]:
-        [alias] = resolved["aliases"]
-        await client.indices.delete_alias(index=alias["indices"], name=alias["name"])
-        await client.indices.delete(index=alias["indices"])
+
+    if serverless:
+        client = SyncElasticsearchSettings().create_client
+
+        resolved = client.indices.resolve_index(name=name)
+        if "aliases" in resolved and resolved["aliases"]:
+            [alias] = resolved["aliases"]
+            client.indices.delete_alias(index=alias["indices"], name=alias["name"])
+            client.indices.delete(index=alias["indices"])
+        else:
+            client.indices.delete(index=name)
+        client.close()
     else:
-        await client.indices.delete(index=name)
-    await client.close()
+        client = AsyncElasticsearchSettings().create_client
+
+        resolved = await client.indices.resolve_index(name=name)
+        if "aliases" in resolved and resolved["aliases"]:
+            [alias] = resolved["aliases"]
+            await client.indices.delete_alias(
+                index=alias["indices"], name=alias["name"]
+            )
+            await client.indices.delete(index=alias["indices"])
+        else:
+            await client.indices.delete(index=name)
+        await client.close()
 
 
 def mk_item_id(item_id: str, collection_id: str):
@@ -329,20 +395,20 @@ class DatabaseLogic:
         Returns:
             A tuple of (collections, next pagination token if any).
         """
+        body = {
+            "sort": [{"id": {"order": "asc"}}],
+            "size": limit,
+        }
         search_after = None
         if token:
             search_after = [token]
+            body["search_after"] = search_after
 
-        response = await self.client.search(
-            index=COLLECTIONS_INDEX,
-            body={
-                "sort": [{"id": {"order": "asc"}}],
-                "size": limit,
-                "search_after": search_after,
-            },
-        )
-
-        hits = response["hits"]["hits"]
+        response = await self.client.search(index=COLLECTIONS_INDEX, body=body)
+        if serverless:
+            hits = response.body["hits"]["hits"]
+        else:
+            hits = response["hits"]["hits"]
         collections = [
             self.collection_serializer.db_to_stac(
                 collection=hit["_source"], request=request, extensions=self.extensions

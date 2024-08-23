@@ -7,10 +7,19 @@ with open("README.md") as f:
 
 install_requires = [
     "stac-fastapi.core==3.0.0",
-    "elasticsearch[async]==8.11.0",
-    "elasticsearch-dsl==8.11.0",
     "uvicorn",
     "starlette",
+]
+
+install_requires_es = [
+    "elasticsearch[async]==8.11.0",
+    "elasticsearch-dsl==8.11.0",
+]
+
+install_requires_serverless_es = [
+    "elasticsearch_serverless[async]",
+    "elasticsearch-dsl",
+    "requests",
 ]
 
 extra_reqs = {
@@ -22,9 +31,12 @@ extra_reqs = {
         "requests",
         "ciso8601",
         "httpx",
+        "debugpy",
     ],
     "docs": ["mkdocs", "mkdocs-material", "pdocs"],
     "server": ["uvicorn[standard]==0.19.0"],
+    "es": install_requires_es,
+    "serverless_es": install_requires_serverless_es,
 }
 
 setup(

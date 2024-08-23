@@ -7,7 +7,7 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.dev.es
+      dockerfile: dockerfiles/Dockerfile.dev.serverless.es
     environment:
       - STAC_FASTAPI_TITLE=stac-fastapi-elasticsearch
       - STAC_FASTAPI_DESCRIPTION=A STAC FastAPI with an Elasticsearch backend
