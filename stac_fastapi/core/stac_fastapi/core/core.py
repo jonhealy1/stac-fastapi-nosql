@@ -1,5 +1,5 @@
 """Core client."""
-
+import json
 import logging
 from datetime import datetime as datetime_type
 from datetime import timezone
@@ -21,16 +21,21 @@ from stac_pydantic.version import STAC_VERSION
 
 from stac_fastapi.core.base_database_logic import BaseDatabaseLogic
 from stac_fastapi.core.base_settings import ApiBaseSettings
+from stac_fastapi.core.models import CollectionSearchPostRequest
 from stac_fastapi.core.models.links import PagingLinks
 from stac_fastapi.core.serializers import CollectionSerializer, ItemSerializer
 from stac_fastapi.core.session import Session
 from stac_fastapi.core.utilities import filter_fields
+from stac_fastapi.extensions.core.collection_search.collection_search import (
+    AsyncBaseCollectionSearchClient,
+)
 from stac_fastapi.extensions.core.filter.client import AsyncBaseFiltersClient
 from stac_fastapi.extensions.third_party.bulk_transactions import (
     BaseBulkTransactionsClient,
     BulkTransactionMethod,
     Items,
 )
+from stac_fastapi.types import stac
 from stac_fastapi.types import stac as stac_types
 from stac_fastapi.types.conformance import BASE_CONFORMANCE_CLASSES
 from stac_fastapi.types.core import AsyncBaseCoreClient, AsyncBaseTransactionsClient
@@ -553,7 +558,8 @@ class CoreClient(AsyncBaseCoreClient):
         """
         base_url = str(request.base_url)
 
-        search = self.database.make_search()
+        is_collection_search = isinstance(search_request, CollectionSearchPostRequest)
+        search = self.database.make_search(is_collection_search=is_collection_search)
 
         if search_request.ids:
             search = self.database.apply_ids_filter(
@@ -594,8 +600,11 @@ class CoreClient(AsyncBaseCoreClient):
                     )
 
         # only cql2_json is supported here
-        if hasattr(search_request, "filter"):
-            cql2_filter = getattr(search_request, "filter", None)
+        if filter := search_request.filter:
+            cql2_filter = filter
+            if search_request.filter_lang == "cql2-text":
+                cql2_filter = json.loads(to_cql2(parse_cql2_text(cql2_filter)))
+            # only cql2_json is supported here
             try:
                 search = self.database.apply_cql2_filter(search, cql2_filter)
             except Exception as e:
@@ -603,8 +612,8 @@ class CoreClient(AsyncBaseCoreClient):
                     status_code=400, detail=f"Error with cql2_json filter: {e}"
                 )
 
-        if hasattr(search_request, "q"):
-            free_text_queries = getattr(search_request, "q", None)
+        if q := search_request.q:
+            free_text_queries = q
             try:
                 search = self.database.apply_free_text_filter(search, free_text_queries)
             except Exception as e:
@@ -636,9 +645,21 @@ class CoreClient(AsyncBaseCoreClient):
         include: Set[str] = fields.include if fields and fields.include else set()
         exclude: Set[str] = fields.exclude if fields and fields.exclude else set()
 
+        if is_collection_search:
+
+            def serializer(self, item):
+                return self.collection_serializer.db_to_stac(
+                    collection=item, request=request, extensions=self.extensions
+                )
+
+        else:
+
+            def serializer(self, item):
+                return self.item_serializer.db_to_stac(item, base_url=base_url)
+
         items = [
             filter_fields(
-                self.item_serializer.db_to_stac(item, base_url=base_url),
+                serializer(self, item),
                 include,
                 exclude,
             )
@@ -646,13 +667,22 @@ class CoreClient(AsyncBaseCoreClient):
         ]
         links = await PagingLinks(request=request, next=next_token).get_links()
 
-        return stac_types.ItemCollection(
-            type="FeatureCollection",
-            features=items,
-            links=links,
-            numReturned=len(items),
-            numMatched=maybe_count,
-        )
+        if is_collection_search:
+            return stac_types.ItemCollection(
+                type="FeatureCollection",
+                collections=items,
+                links=links,
+                numReturned=len(items),
+                numMatched=maybe_count,
+            )
+        else:
+            return stac_types.ItemCollection(
+                type="FeatureCollection",
+                features=items,
+                links=links,
+                numReturned=len(items),
+                numMatched=maybe_count,
+            )
 
 
 @attr.s
@@ -984,3 +1014,32 @@ class EsAsyncBaseFiltersClient(AsyncBaseFiltersClient):
             },
             "additionalProperties": True,
         }
+
+
+@attr.s
+class AsyncCollectionSearchClient(AsyncBaseCollectionSearchClient, CoreClient):
+    """AsyncCollectionSearchClient class."""
+
+    def __init__(self, database_logic, **kwargs):
+        """Run the Constructor."""
+        super(AsyncCollectionSearchClient, self).__init__(**kwargs)
+        self.database = database_logic
+
+    async def post_all_collections(
+        self, search_request: CollectionSearchPostRequest, **kwargs
+    ) -> stac.ItemCollection:
+        """
+        Perform a POST search on the catalog.
+
+        Args:
+            search_request (BaseSearchPostRequest): Request object that includes the parameters for the search.
+            kwargs: Keyword arguments passed to the function.
+
+        Returns:
+            ItemCollection: A collection of items matching the search criteria.
+
+        Raises:
+            HTTPException: If there is an error with the cql2_json filter.
+        """
+        request = kwargs.get("request")
+        return await self.post_search(search_request=search_request, request=request)

@@ -485,7 +485,7 @@ class DatabaseLogic:
         return item["_source"]
 
     @staticmethod
-    def make_search():
+    def make_search(is_collection_search=False):
         """Database logic to create a Search instance."""
         return Search().sort(*DEFAULT_SORT)
 

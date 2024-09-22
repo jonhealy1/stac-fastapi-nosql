@@ -1,5 +1,4 @@
 """Database logic."""
-
 import asyncio
 import logging
 import os
@@ -303,6 +302,16 @@ class Geometry(Protocol):  # noqa
     coordinates: Any
 
 
+# A marker class to distinguish the type of search
+
+
+class CollectionSearch(Search):
+    """CollectionSearch marker class."""
+
+    # def __init__(self, kwargs=None):
+    #     super().__init__(kwargs **kwargs)
+
+
 @attr.s
 class DatabaseLogic:
     """Database logic."""
@@ -458,8 +467,16 @@ class DatabaseLogic:
         return item["_source"]
 
     @staticmethod
-    def make_search():
+    def make_search(is_collection_search=False):
         """Database logic to create a Search instance."""
+        if is_collection_search:
+            return CollectionSearch().sort(
+                *{
+                    "datetime": {"order": "desc"},
+                    "id": {"order": "desc"},
+                    "collection": {"order": "desc"},
+                }
+            )
         return Search().sort(*DEFAULT_SORT)
 
     @staticmethod
@@ -583,17 +600,6 @@ class DatabaseLogic:
         return search
 
     @staticmethod
-    def apply_free_text_filter(search: Search, free_text_queries: Optional[List[str]]):
-        """Database logic to perform query for search endpoint."""
-        if free_text_queries is not None:
-            free_text_query_string = '" OR properties.\\*:"'.join(free_text_queries)
-            search = search.query(
-                "query_string", query=f'properties.\\*:"{free_text_query_string}"'
-            )
-
-        return search
-
-    @staticmethod
     def apply_cql2_filter(search: Search, _filter: Optional[Dict[str, Any]]):
         """
         Apply a CQL2 filter to an Elasticsearch Search object.
@@ -664,7 +670,10 @@ class DatabaseLogic:
 
         query = search.query.to_dict() if search.query else None
 
-        index_param = indices(collection_ids)
+        if is_collection_search := isinstance(search, CollectionSearch):
+            index_param = f"{COLLECTIONS_INDEX}-000001"
+        else:
+            index_param = indices(collection_ids)
 
         max_result_window = MAX_LIMIT
 
@@ -675,7 +684,7 @@ class DatabaseLogic:
                 index=index_param,
                 ignore_unavailable=ignore_unavailable,
                 query=query,
-                sort=sort or DEFAULT_SORT,
+                sort=sort or None,
                 search_after=search_after,
                 size=size_limit,
             )
