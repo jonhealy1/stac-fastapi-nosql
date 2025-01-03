@@ -735,6 +735,58 @@ class TransactionsClient(AsyncBaseTransactionsClient):
         return ItemSerializer.db_to_stac(item, base_url)
 
     @overrides
+    async def merge_patch_item(
+        self, collection_id: str, item_id: str, item: stac_types.PartialItem, **kwargs
+    ) -> Optional[stac_types.Item]:
+        """Patch an item in the collection following RF7396..
+
+        Args:
+            collection_id (str): The ID of the collection the item belongs to.
+            item_id (str): The ID of the item to be updated.
+            item (stac_types.PartialItem): The partial item data.
+            kwargs: Other optional arguments, including the request object.
+
+        Returns:
+            stac_types.Item: The patched item object.
+
+        """
+        item = await self.database.merge_patch_item(
+            collection_id=collection_id,
+            item_id=item_id,
+            item=item,
+            base_url=str(kwargs["request"].base_url),
+        )
+        return ItemSerializer.db_to_stac(item, base_url=str(kwargs["request"].base_url))
+
+    @overrides
+    async def json_patch_item(
+        self,
+        collection_id: str,
+        item_id: str,
+        operations: List[stac_types.PatchOperation],
+        **kwargs,
+    ) -> Optional[stac_types.Item]:
+        """Patch an item in the collection following RF6902.
+
+        Args:
+            collection_id (str): The ID of the collection the item belongs to.
+            item_id (str): The ID of the item to be updated.
+            operations (List): List of operations to run on item.
+            kwargs: Other optional arguments, including the request object.
+
+        Returns:
+            stac_types.Item: The patched item object.
+
+        """
+        item = await self.database.json_patch_item(
+            collection_id=collection_id,
+            item_id=item_id,
+            base_url=str(kwargs["request"].base_url),
+            operations=operations,
+        )
+        return ItemSerializer.db_to_stac(item, base_url=str(kwargs["request"].base_url))
+
+    @overrides
     async def delete_item(
         self, item_id: str, collection_id: str, **kwargs
     ) -> Optional[stac_types.Item]:
@@ -811,6 +863,59 @@ class TransactionsClient(AsyncBaseTransactionsClient):
         return CollectionSerializer.db_to_stac(
             collection,
             request,
+            extensions=[type(ext).__name__ for ext in self.database.extensions],
+        )
+
+    @overrides
+    async def merge_patch_collection(
+        self, collection_id: str, collection: stac_types.PartialCollection, **kwargs
+    ) -> Optional[stac_types.Collection]:
+        """Patch a collection following RF7396..
+
+        Args:
+            collection_id (str): The ID of the collection  to patch.
+            collection (stac_types.Collection): The partial collection data.
+            kwargs: Other optional arguments, including the request object.
+
+        Returns:
+            stac_types.Collection: The patched collection object.
+
+        """
+        collection = await self.database.merge_patch_collection(
+            collection_id=collection_id,
+            base_url=str(kwargs["request"].base_url),
+            collection=collection,
+        )
+
+        return CollectionSerializer.db_to_stac(
+            collection,
+            kwargs["request"],
+            extensions=[type(ext).__name__ for ext in self.database.extensions],
+        )
+
+    @overrides
+    async def json_patch_collection(
+        self, collection_id: str, operations: List[stac_types.PatchOperation], **kwargs
+    ) -> Optional[stac_types.Collection]:
+        """Patch a collection following RF6902.
+
+        Args:
+            collection_id (str): The ID of the collection to patch.
+            operations (List): List of operations to run on collection.
+            kwargs: Other optional arguments, including the request object.
+
+        Returns:
+            stac_types.Collection: The patched collection object.
+
+        """
+        collection = await self.database.json_patch_collection(
+            collection_id=collection_id,
+            operations=operations,
+            base_url=str(kwargs["request"].base_url),
+        )
+        return CollectionSerializer.db_to_stac(
+            collection,
+            kwargs["request"],
             extensions=[type(ext).__name__ for ext in self.database.extensions],
         )
 

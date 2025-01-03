@@ -3,9 +3,11 @@
 This module contains functions for transforming geospatial coordinates,
 such as converting bounding boxes to polygon representations.
 """
+
+import json
 from typing import Any, Dict, List, Optional, Set, Union
 
-from stac_fastapi.types.stac import Item
+from stac_fastapi.types.stac import Item, PatchAddReplaceTest, PatchRemove
 
 MAX_LIMIT = 10000
 
@@ -133,3 +135,65 @@ def dict_deep_update(merge_to: Dict[str, Any], merge_from: Dict[str, Any]) -> No
             dict_deep_update(merge_to[k], merge_from[k])
         else:
             merge_to[k] = v
+
+
+def merge_to_operations(data: Dict) -> List:
+    """Convert merge operation to list of RF6902 operations.
+
+    Args:
+        data: dictionary to convert.
+
+    Returns:
+        List: list of RF6902 operations.
+    """
+    operations = []
+
+    for key, value in data.copy().items():
+
+        if value is None:
+            operations.append(PatchRemove(op="remove", path=key))
+
+        elif isinstance(value, dict):
+            nested_operations = merge_to_operations(value)
+
+            for nested_operation in nested_operations:
+                nested_operation.path = f"{key}.{nested_operation.path}"
+                operations.append(nested_operation)
+
+        else:
+            operations.append(PatchAddReplaceTest(op="add", path=key, value=value))
+
+    return operations
+
+
+def operations_to_script(operations: List) -> Dict:
+    """Convert list of operation to painless script.
+
+    Args:
+        operations: List of RF6902 operations.
+
+    Returns:
+        Dict: elasticsearch update script.
+    """
+    source = ""
+    for operation in operations:
+        nest, partition, key = operation.path.rpartition(".")
+        if nest:
+            source += f"if (!ctx._source.containsKey('{nest}')){{Debug.explain('{nest} does not exist');}}"
+
+        if operation.op != "add":
+            source += f"if (!ctx._source.{nest + partition}containsKey('{key}')){{Debug.explain('{operation.path} does not exist');}}"
+
+        if operation.op in ["copy", "move"]:
+            source += f"ctx._source.{operation.path} = ctx._source.{getattr(operation, 'from')};"
+
+        if operation.op in ["remove", "move"]:
+            source += f"ctx._source.{nest + partition}remove('{key}');"
+
+        if operation.op in ["add", "replace"]:
+            source += f"ctx._source.{operation.path} = {json.dumps(operation.value)};"
+
+    return {
+        "source": source,
+        "lang": "painless",
+    }

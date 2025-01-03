@@ -4,7 +4,7 @@ FROM python:3.10-slim
 # update apt pkgs, and install build-essential for ciso8601
 RUN apt-get update && \
     apt-get -y upgrade && \
-    apt-get install -y build-essential git && \
+    apt-get -y install build-essential git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
