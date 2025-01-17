@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- Update dynamic mapping for items to map long values to double versus float [#326](https://github.com/stac-utils/stac-fastapi-elasticsearch-opensearch/pull/326) 
+
 ## [v3.2.2] - 2024-12-15
 
 ### Changed

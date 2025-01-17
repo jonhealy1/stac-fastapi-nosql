@@ -103,7 +103,7 @@ ES_MAPPINGS_DYNAMIC_TEMPLATES = [
     },
     # Default all other strings not otherwise specified to keyword
     {"strings": {"match_mapping_type": "string", "mapping": {"type": "keyword"}}},
-    {"numerics": {"match_mapping_type": "long", "mapping": {"type": "float"}}},
+    {"numerics": {"match_mapping_type": "long", "mapping": {"type": "double"}}},
 ]
 
 ES_ITEMS_MAPPINGS = {

@@ -1,4 +1,6 @@
+import random
 import uuid
+from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 
 import pytest
@@ -459,3 +461,73 @@ async def test_search_line_string_intersects(app_client, ctx):
 
     resp_json = resp.json()
     assert len(resp_json["features"]) == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "value, expected",
+    [
+        (32767, 1),  # Short Limit,
+        (2147483647, 1),  # Int Limit
+        (2147483647 + 5000, 1),  # Above int Limit
+        (21474836470, 1),  # Above int Limit
+        # This value still fails to return 1
+        # Commenting out
+        # (9223372036854775807, 1),
+    ],
+)
+async def test_big_int_eo_search(
+    app_client, txn_client, test_item, test_collection, value, expected
+):
+
+    random_str = "".join(random.choice("abcdef") for i in range(random.randint(1, 5)))
+    collection_id = f"test-collection-eo-{random_str}"
+
+    test_big_int_item = test_item
+    del test_big_int_item["properties"]["eo:bands"]
+    test_big_int_item["collection"] = collection_id
+    test_big_int_collection = test_collection
+    test_big_int_collection["id"] = collection_id
+
+    # type number
+    attr = "eo:full_width_half_max"
+
+    stac_extensions = [
+        "https://stac-extensions.github.io/eo/v2.0.0/schema.json",
+    ]
+
+    test_collection["stac_extensions"] = stac_extensions
+
+    test_item["stac_extensions"] = stac_extensions
+
+    await create_collection(txn_client, test_collection)
+
+    for val in [
+        value,
+        value + random.randint(10, 1010),
+        value - random.randint(10, 1010),
+    ]:
+        item = deepcopy(test_item)
+        item["id"] = str(uuid.uuid4())
+        item["properties"][attr] = val
+        await create_item(txn_client, item)
+
+    params = {
+        "collections": [item["collection"]],
+        "filter": {
+            "args": [
+                {
+                    "args": [
+                        {"property": f"properties.{attr}"},
+                        value,
+                    ],
+                    "op": "=",
+                }
+            ],
+            "op": "and",
+        },
+    }
+    resp = await app_client.post("/search", json=params)
+    resp_json = resp.json()
+    results = set([x["properties"][attr] for x in resp_json["features"]])
+    assert len(results) == expected

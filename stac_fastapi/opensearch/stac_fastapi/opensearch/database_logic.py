@@ -15,8 +15,8 @@ from opensearchpy.helpers.query import Q
 from opensearchpy.helpers.search import Search
 from starlette.requests import Request
 
-from stac_fastapi.core import serializers
 from stac_fastapi.core.extensions import filter
+from stac_fastapi.core.serializers import CollectionSerializer, ItemSerializer
 from stac_fastapi.core.utilities import MAX_LIMIT, bbox2polygon
 from stac_fastapi.opensearch.config import (
     AsyncOpensearchSettings as AsyncSearchSettings,
@@ -105,7 +105,7 @@ ES_MAPPINGS_DYNAMIC_TEMPLATES = [
     },
     # Default all other strings not otherwise specified to keyword
     {"strings": {"match_mapping_type": "string", "mapping": {"type": "keyword"}}},
-    {"numerics": {"match_mapping_type": "long", "mapping": {"type": "float"}}},
+    {"numerics": {"match_mapping_type": "long", "mapping": {"type": "double"}}},
 ]
 
 ES_ITEMS_MAPPINGS = {
@@ -330,11 +330,9 @@ class DatabaseLogic:
     client = AsyncSearchSettings().create_client
     sync_client = SyncSearchSettings().create_client
 
-    item_serializer: Type[serializers.ItemSerializer] = attr.ib(
-        default=serializers.ItemSerializer
-    )
-    collection_serializer: Type[serializers.CollectionSerializer] = attr.ib(
-        default=serializers.CollectionSerializer
+    item_serializer: Type[ItemSerializer] = attr.ib(default=ItemSerializer)
+    collection_serializer: Type[CollectionSerializer] = attr.ib(
+        default=CollectionSerializer
     )
 
     extensions: List[str] = attr.ib(default=attr.Factory(list))
