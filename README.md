@@ -267,17 +267,17 @@ A reindex operation might be useful to apply changes to documents or to correct 
 
 The index templates will make sure that manually created indices will also have the correct mappings and settings.
 
-In this example, we will make a copy of an existing Item index `items_my-collection-000001` but change the Item identifier to be lowercase.
+In this example, we will make a copy of an existing Item index `items_my-collection-lower_my-collection-hex-000001` but change the Item identifier to be lowercase.
 
 ```shell
 curl -X "POST" "http://localhost:9200/_reindex" \
   -H 'Content-Type: application/json' \
   -d $'{
     "source": {
-      "index": "items_my-collection-000001"
+      "index": "items_my-collection-lower_my-collection-hex-000001"
     }, 
     "dest": {
-      "index": "items_my-collection-000002"
+      "index": "items_my-collection-lower_my-collection-hex-000002"
     },
     "script": {
       "source": "ctx._source.id = ctx._source.id.toLowerCase()",
@@ -286,7 +286,7 @@ curl -X "POST" "http://localhost:9200/_reindex" \
   }'
 ```
 
-If we are happy with the data in the newly created index, we can move the alias `items_my-collection` to the new index `items_my-collection-000002`.
+If we are happy with the data in the newly created index, we can move the alias `items_my-collection` to the new index `items_my-collection-lower_my-collection-hex-000002`.
 ```shell
 curl -X "POST" "http://localhost:9200/_aliases" \
   -h 'Content-Type: application/json' \
@@ -300,7 +300,7 @@ curl -X "POST" "http://localhost:9200/_aliases" \
       },
       {
         "add": {
-          "index": "items_my-collection-000002",
+          "index": "items_my-collection-lower_my-collection-hex-000002",
           "alias": "items_my-collection"
         }
       }

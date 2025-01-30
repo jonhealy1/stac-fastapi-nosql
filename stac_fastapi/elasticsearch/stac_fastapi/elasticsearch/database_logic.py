@@ -156,7 +156,20 @@ def index_by_collection_id(collection_id: str) -> str:
     Returns:
         str: The index name derived from the collection id.
     """
-    return f"{ITEMS_INDEX_PREFIX}{''.join(c for c in collection_id.lower() if c not in ES_INDEX_NAME_UNSUPPORTED_CHARS)}"
+    return f"{ITEMS_INDEX_PREFIX}{''.join(c for c in collection_id.lower() if c not in ES_INDEX_NAME_UNSUPPORTED_CHARS)}_{collection_id.encode('utf-8').hex()}"
+
+
+def index_alias_by_collection_id(collection_id: str) -> str:
+    """
+    Translate a collection id into an Elasticsearch index alias.
+
+    Args:
+        collection_id (str): The collection id to translate into an index alias.
+
+    Returns:
+        str: The index alias derived from the collection id.
+    """
+    return f"{ITEMS_INDEX_PREFIX}{''.join(c for c in collection_id if c not in ES_INDEX_NAME_UNSUPPORTED_CHARS)}"
 
 
 def indices(collection_ids: Optional[List[str]]) -> str:
@@ -172,7 +185,7 @@ def indices(collection_ids: Optional[List[str]]) -> str:
     if collection_ids is None or collection_ids == []:
         return ITEM_INDICES
     else:
-        return ",".join([index_by_collection_id(c) for c in collection_ids])
+        return ",".join([index_alias_by_collection_id(c) for c in collection_ids])
 
 
 async def create_index_templates() -> None:
@@ -231,11 +244,10 @@ async def create_item_index(collection_id: str):
 
     """
     client = AsyncElasticsearchSettings().create_client
-    index_name = index_by_collection_id(collection_id)
 
     await client.options(ignore_status=400).indices.create(
         index=f"{index_by_collection_id(collection_id)}-000001",
-        aliases={index_name: {}},
+        aliases={index_alias_by_collection_id(collection_id): {}},
     )
     await client.close()
 
@@ -248,7 +260,7 @@ async def delete_item_index(collection_id: str):
     """
     client = AsyncElasticsearchSettings().create_client
 
-    name = index_by_collection_id(collection_id)
+    name = index_alias_by_collection_id(collection_id)
     resolved = await client.indices.resolve_index(name=name)
     if "aliases" in resolved and resolved["aliases"]:
         [alias] = resolved["aliases"]
@@ -288,7 +300,7 @@ def mk_actions(collection_id: str, processed_items: List[Item]):
     """
     return [
         {
-            "_index": index_by_collection_id(collection_id),
+            "_index": index_alias_by_collection_id(collection_id),
             "_id": mk_item_id(item["id"], item["collection"]),
             "_source": item,
         }
@@ -449,7 +461,7 @@ class DatabaseLogic:
         """
         try:
             item = await self.client.get(
-                index=index_by_collection_id(collection_id),
+                index=index_alias_by_collection_id(collection_id),
                 id=mk_item_id(item_id, collection_id),
             )
         except exceptions.NotFoundError:
@@ -808,7 +820,7 @@ class DatabaseLogic:
         await self.check_collection_exists(collection_id=item["collection"])
 
         if not exist_ok and await self.client.exists(
-            index=index_by_collection_id(item["collection"]),
+            index=index_alias_by_collection_id(item["collection"]),
             id=mk_item_id(item["id"], item["collection"]),
         ):
             raise ConflictError(
@@ -845,7 +857,7 @@ class DatabaseLogic:
             raise NotFoundError(f"Collection {collection_id} does not exist")
 
         if not exist_ok and self.sync_client.exists(
-            index=index_by_collection_id(collection_id),
+            index=index_alias_by_collection_id(collection_id),
             id=mk_item_id(item_id, collection_id),
         ):
             raise ConflictError(
@@ -871,7 +883,7 @@ class DatabaseLogic:
         item_id = item["id"]
         collection_id = item["collection"]
         es_resp = await self.client.index(
-            index=index_by_collection_id(collection_id),
+            index=index_alias_by_collection_id(collection_id),
             id=mk_item_id(item_id, collection_id),
             document=item,
             refresh=refresh,
@@ -897,7 +909,7 @@ class DatabaseLogic:
         """
         try:
             await self.client.delete(
-                index=index_by_collection_id(collection_id),
+                index=index_alias_by_collection_id(collection_id),
                 id=mk_item_id(item_id, collection_id),
                 refresh=refresh,
             )

@@ -11,14 +11,14 @@ if os.getenv("BACKEND", "elasticsearch").lower() == "opensearch":
         COLLECTIONS_INDEX,
         ES_COLLECTIONS_MAPPINGS,
         ES_ITEMS_MAPPINGS,
-        index_by_collection_id,
+        index_alias_by_collection_id,
     )
 else:
     from stac_fastapi.elasticsearch.database_logic import (
         COLLECTIONS_INDEX,
         ES_COLLECTIONS_MAPPINGS,
         ES_ITEMS_MAPPINGS,
-        index_by_collection_id,
+        index_alias_by_collection_id,
     )
 
 
@@ -42,7 +42,7 @@ async def test_index_mapping_items(txn_client, load_test_data):
         api.Collection(**collection), request=MockRequest
     )
     response = await database.client.indices.get_mapping(
-        index=index_by_collection_id(collection["id"])
+        index=index_alias_by_collection_id(collection["id"])
     )
     if not isinstance(response, dict):
         response = response.body
