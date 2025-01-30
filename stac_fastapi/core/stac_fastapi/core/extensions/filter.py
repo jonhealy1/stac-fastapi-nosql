@@ -140,26 +140,38 @@ def to_es(query: Dict[str, Any]) -> Dict[str, Any]:
         ComparisonOp.GT,
         ComparisonOp.GTE,
     ]:
+        range_op = {
+            ComparisonOp.LT: "lt",
+            ComparisonOp.LTE: "lte",
+            ComparisonOp.GT: "gt",
+            ComparisonOp.GTE: "gte",
+        }
+
         field = to_es_field(query["args"][0]["property"])
         value = query["args"][1]
         if isinstance(value, dict) and "timestamp" in value:
-            # Handle timestamp fields specifically
             value = value["timestamp"]
-        if query["op"] == ComparisonOp.IS_NULL:
-            return {"bool": {"must_not": {"exists": {"field": field}}}}
+            if query["op"] == ComparisonOp.EQ:
+                return {"range": {field: {"gte": value, "lte": value}}}
+            elif query["op"] == ComparisonOp.NEQ:
+                return {
+                    "bool": {
+                        "must_not": [{"range": {field: {"gte": value, "lte": value}}}]
+                    }
+                }
+            else:
+                return {"range": {field: {range_op[query["op"]]: value}}}
         else:
             if query["op"] == ComparisonOp.EQ:
                 return {"term": {field: value}}
             elif query["op"] == ComparisonOp.NEQ:
                 return {"bool": {"must_not": [{"term": {field: value}}]}}
             else:
-                range_op = {
-                    ComparisonOp.LT: "lt",
-                    ComparisonOp.LTE: "lte",
-                    ComparisonOp.GT: "gt",
-                    ComparisonOp.GTE: "gte",
-                }[query["op"]]
-                return {"range": {field: {range_op: value}}}
+                return {"range": {field: {range_op[query["op"]]: value}}}
+
+    elif query["op"] == ComparisonOp.IS_NULL:
+        field = to_es_field(query["args"][0]["property"])
+        return {"bool": {"must_not": {"exists": {"field": field}}}}
 
     elif query["op"] == AdvancedComparisonOp.BETWEEN:
         field = to_es_field(query["args"][0]["property"])

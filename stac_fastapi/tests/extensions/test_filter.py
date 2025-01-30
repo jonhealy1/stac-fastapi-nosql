@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from os import listdir
 from os.path import isfile, join
@@ -48,6 +49,10 @@ async def test_search_filters_post(app_client, ctx):
 
     for _filter in filters:
         resp = await app_client.post("/search", json={"filter": _filter})
+        if resp.status_code != 200:
+            logging.error(f"Failed with status {resp.status_code}")
+            logging.error(f"Response body: {resp.json()}")
+            logging.error({"filter": _filter})
         assert resp.status_code == 200
 
 
@@ -428,6 +433,51 @@ async def test_search_filter_extension_between(app_client, ctx):
         }
     }
     resp = await app_client.post("/search", json=params)
+
+    assert resp.status_code == 200
+    assert len(resp.json()["features"]) == 1
+
+
+@pytest.mark.asyncio
+async def test_search_filter_extension_isnull_post(app_client, ctx):
+    # Test for a property that is not null
+    params = {
+        "filter-lang": "cql2-json",
+        "filter": {
+            "op": "isNull",
+            "args": [{"property": "properties.view:sun_elevation"}],
+        },
+    }
+    resp = await app_client.post("/search", json=params)
+
+    assert resp.status_code == 200
+    assert len(resp.json()["features"]) == 0
+
+    # Test for the property that is null
+    params = {
+        "filter-lang": "cql2-json",
+        "filter": {
+            "op": "isNull",
+            "args": [{"property": "properties.thispropertyisnull"}],
+        },
+    }
+    resp = await app_client.post("/search", json=params)
+
+    assert resp.status_code == 200
+    assert len(resp.json()["features"]) == 1
+
+
+@pytest.mark.asyncio
+async def test_search_filter_extension_isnull_get(app_client, ctx):
+    # Test for a property that is not null
+
+    resp = await app_client.get("/search?filter=properties.view:sun_elevation IS NULL")
+
+    assert resp.status_code == 200
+    assert len(resp.json()["features"]) == 0
+
+    # Test for the property that is null
+    resp = await app_client.get("/search?filter=properties.thispropertyisnull IS NULL")
 
     assert resp.status_code == 200
     assert len(resp.json()["features"]) == 1

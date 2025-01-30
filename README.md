@@ -317,7 +317,7 @@ Authentication is an optional feature that can be enabled through `Route Depende
 
 ## Aggregation
 
-Aggregation of points and geometries, as well as frequency distribution aggregation of any other property including dates is supported in stac-fatsapi-elasticsearch-opensearch. Aggregations can be defined at the root Catalog level (`/aggregations`) and at the Collection level (`/<collection_id>/aggregations`). Details for supported aggregations can be found at [./docs/src/aggregation.md](./docs/src/aggregation.md)
+Aggregation of points and geometries, as well as frequency distribution aggregation of any other property including dates is supported in stac-fatsapi-elasticsearch-opensearch. Aggregations can be defined at the root Catalog level (`/aggregations`) and at the Collection level (`/<collection_id>/aggregations`). Details for supported aggregations can be found in [the aggregation docs](./docs/src/aggregation.md)
 
 ## Rate Limiting
 
