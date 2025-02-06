@@ -725,7 +725,7 @@ class TransactionsClient(AsyncBaseTransactionsClient):
         """
         item = item.model_dump(mode="json")
         base_url = str(kwargs["request"].base_url)
-        now = datetime_type.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        now = datetime_type.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         item["properties"]["updated"] = now
 
         await self.database.check_collection_exists(collection_id)
