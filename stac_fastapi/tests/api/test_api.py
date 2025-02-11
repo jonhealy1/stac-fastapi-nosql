@@ -1,5 +1,6 @@
 import uuid
-from datetime import datetime, timedelta, timezone
+from copy import deepcopy
+from datetime import datetime, timedelta
 
 import pytest
 
@@ -205,7 +206,13 @@ async def test_app_fields_extension_return_all_properties(
     feature = resp_json["features"][0]
     assert len(feature["properties"]) >= len(item["properties"])
     for expected_prop, expected_value in item["properties"].items():
-        if expected_prop in ("datetime", "created", "updated"):
+        if expected_prop in (
+            "datetime",
+            "start_datetime",
+            "end_datetime",
+            "created",
+            "updated",
+        ):
             assert feature["properties"][expected_prop][0:19] == expected_value[0:19]
         else:
             assert feature["properties"][expected_prop] == expected_value
@@ -259,9 +266,9 @@ async def test_app_sort_extension_get_asc(app_client, txn_client, ctx):
     second_item["id"] = "another-item"
     another_item_date = datetime.strptime(
         first_item["properties"]["datetime"], "%Y-%m-%dT%H:%M:%SZ"
-    ).replace(tzinfo=timezone.utc) - timedelta(days=1)
-    second_item["properties"]["datetime"] = another_item_date.isoformat().replace(
-        "+00:00", "Z"
+    ) - timedelta(days=1)
+    second_item["properties"]["datetime"] = another_item_date.strftime(
+        "%Y-%m-%dT%H:%M:%SZ"
     )
 
     await create_item(txn_client, second_item)
@@ -281,10 +288,11 @@ async def test_app_sort_extension_get_desc(app_client, txn_client, ctx):
     second_item["id"] = "another-item"
     another_item_date = datetime.strptime(
         first_item["properties"]["datetime"], "%Y-%m-%dT%H:%M:%SZ"
-    ).replace(tzinfo=timezone.utc) - timedelta(days=1)
-    second_item["properties"]["datetime"] = another_item_date.isoformat().replace(
-        "+00:00", "Z"
+    ) - timedelta(days=1)
+    second_item["properties"]["datetime"] = another_item_date.strftime(
+        "%Y-%m-%dT%H:%M:%SZ"
     )
+
     await create_item(txn_client, second_item)
 
     resp = await app_client.get("/search?sortby=-properties.datetime")
@@ -302,10 +310,11 @@ async def test_app_sort_extension_post_asc(app_client, txn_client, ctx):
     second_item["id"] = "another-item"
     another_item_date = datetime.strptime(
         first_item["properties"]["datetime"], "%Y-%m-%dT%H:%M:%SZ"
-    ).replace(tzinfo=timezone.utc) - timedelta(days=1)
-    second_item["properties"]["datetime"] = another_item_date.isoformat().replace(
-        "+00:00", "Z"
+    ) - timedelta(days=1)
+    second_item["properties"]["datetime"] = another_item_date.strftime(
+        "%Y-%m-%dT%H:%M:%SZ"
     )
+
     await create_item(txn_client, second_item)
 
     params = {
@@ -327,9 +336,9 @@ async def test_app_sort_extension_post_desc(app_client, txn_client, ctx):
     second_item["id"] = "another-item"
     another_item_date = datetime.strptime(
         first_item["properties"]["datetime"], "%Y-%m-%dT%H:%M:%SZ"
-    ).replace(tzinfo=timezone.utc) - timedelta(days=1)
-    second_item["properties"]["datetime"] = another_item_date.isoformat().replace(
-        "+00:00", "Z"
+    ) - timedelta(days=1)
+    second_item["properties"]["datetime"] = another_item_date.strftime(
+        "%Y-%m-%dT%H:%M:%SZ"
     )
     await create_item(txn_client, second_item)
 
@@ -410,7 +419,22 @@ async def test_search_point_does_not_intersect(app_client, ctx):
 
 
 @pytest.mark.asyncio
-async def test_datetime_non_interval(app_client, ctx):
+async def test_datetime_response_format(app_client, txn_client, ctx):
+    first_item = dict(ctx.item)
+
+    second_item = deepcopy(first_item)
+    second_item["id"] = "second-item"
+    second_item["properties"]["datetime"] = None
+
+    await create_item(txn_client, second_item)
+
+    third_item = deepcopy(first_item)
+    third_item["id"] = "third-item"
+    del third_item["properties"]["start_datetime"]
+    del third_item["properties"]["end_datetime"]
+
+    await create_item(txn_client, third_item)
+
     dt_formats = [
         "2020-02-12T12:30:22+00:00",
         "2020-02-12T12:30:22.00Z",
@@ -429,6 +453,150 @@ async def test_datetime_non_interval(app_client, ctx):
         resp_json = resp.json()
         # datetime is returned in this format "2020-02-12T12:30:22Z"
         assert resp_json["features"][0]["properties"]["datetime"][0:19] == dt[0:19]
+
+
+@pytest.mark.asyncio
+async def test_datetime_non_interval(app_client, txn_client, ctx):
+    first_item = dict(ctx.item)
+
+    second_item = deepcopy(first_item)
+    second_item["id"] = "second-item"
+    second_item["properties"]["datetime"] = None
+
+    await create_item(txn_client, second_item)
+
+    third_item = deepcopy(first_item)
+    third_item["id"] = "third-item"
+    del third_item["properties"]["start_datetime"]
+    del third_item["properties"]["end_datetime"]
+
+    await create_item(txn_client, third_item)
+
+    dt_formats = [
+        "2020-02-12T12:30:22+00:00",
+        "2020-02-12T12:30:22.00Z",
+        "2020-02-12T12:30:22Z",
+        "2020-02-12T12:30:22.00+00:00",
+    ]
+
+    for dt in dt_formats:
+        params = {
+            "datetime": dt,
+            "collections": [ctx.item["collection"]],
+        }
+
+        resp = await app_client.post("/search", json=params)
+        assert resp.status_code == 200
+        resp_json = resp.json()
+        assert len(resp_json["features"]) == 3
+
+
+@pytest.mark.asyncio
+async def test_datetime_interval(app_client, txn_client, ctx):
+    first_item = dict(ctx.item)
+
+    second_item = deepcopy(first_item)
+    second_item["id"] = "second-item"
+    second_item["properties"]["datetime"] = None
+
+    await create_item(txn_client, second_item)
+
+    third_item = deepcopy(first_item)
+    third_item["id"] = "third-item"
+    del third_item["properties"]["start_datetime"]
+    del third_item["properties"]["end_datetime"]
+
+    await create_item(txn_client, third_item)
+
+    dt_formats = [
+        "2020-02-06T12:30:22+00:00/2020-02-13T12:30:22+00:00",
+        "2020-02-12T12:30:22.00Z/2020-02-20T12:30:22.00Z",
+        "2020-02-12T12:30:22Z/2020-02-13T12:30:22Z",
+        "2020-02-06T12:30:22.00+00:00/2020-02-20T12:30:22.00+00:00",
+    ]
+
+    for dt in dt_formats:
+        params = {
+            "datetime": dt,
+            "collections": [ctx.item["collection"]],
+        }
+
+        resp = await app_client.post("/search", json=params)
+        assert resp.status_code == 200
+        resp_json = resp.json()
+        assert len(resp_json["features"]) == 3
+
+
+@pytest.mark.asyncio
+async def test_datetime_bad_non_interval(app_client, txn_client, ctx):
+    first_item = dict(ctx.item)
+
+    second_item = deepcopy(first_item)
+    second_item["id"] = "second-item"
+    second_item["properties"]["datetime"] = None
+
+    await create_item(txn_client, second_item)
+
+    third_item = deepcopy(first_item)
+    third_item["id"] = "third-item"
+    del third_item["properties"]["start_datetime"]
+    del third_item["properties"]["end_datetime"]
+
+    await create_item(txn_client, third_item)
+
+    dt_formats = [
+        "2020-02-06T12:30:22+00:00",
+        "2020-02-06T12:30:22.00Z",
+        "2020-02-06T12:30:22Z",
+        "2020-02-06T12:30:22.00+00:00",
+    ]
+
+    for dt in dt_formats:
+        params = {
+            "datetime": dt,
+            "collections": [ctx.item["collection"]],
+        }
+
+        resp = await app_client.post("/search", json=params)
+        assert resp.status_code == 200
+        resp_json = resp.json()
+        assert len(resp_json["features"]) == 0
+
+
+@pytest.mark.asyncio
+async def test_datetime_bad_interval(app_client, txn_client, ctx):
+    first_item = dict(ctx.item)
+
+    second_item = deepcopy(first_item)
+    second_item["id"] = "second-item"
+    second_item["properties"]["datetime"] = None
+
+    await create_item(txn_client, second_item)
+
+    third_item = deepcopy(first_item)
+    third_item["id"] = "third-item"
+    del third_item["properties"]["start_datetime"]
+    del third_item["properties"]["end_datetime"]
+
+    await create_item(txn_client, third_item)
+
+    dt_formats = [
+        "1920-02-04T12:30:22+00:00/1920-02-06T12:30:22+00:00",
+        "1920-02-04T12:30:22.00Z/1920-02-06T12:30:22.00Z",
+        "1920-02-04T12:30:22Z/1920-02-06T12:30:22Z",
+        "1920-02-04T12:30:22.00+00:00/1920-02-06T12:30:22.00+00:00",
+    ]
+
+    for dt in dt_formats:
+        params = {
+            "datetime": dt,
+            "collections": [ctx.item["collection"]],
+        }
+
+        resp = await app_client.post("/search", json=params)
+        assert resp.status_code == 200
+        resp_json = resp.json()
+        assert len(resp_json["features"]) == 0
 
 
 @pytest.mark.asyncio

@@ -393,6 +393,25 @@ async def test_item_search_temporal_window_post(app_client, ctx, load_test_data)
 
 
 @pytest.mark.asyncio
+async def test_item_search_temporal_intersecting_window_post(app_client, ctx):
+    """Test POST search with two-tailed spatio-temporal query (core)"""
+    test_item = ctx.item
+
+    item_date = rfc3339_str_to_datetime(test_item["properties"]["datetime"])
+    item_date_before = item_date - timedelta(days=10)
+    item_date_after = item_date - timedelta(days=2)
+
+    params = {
+        "collections": [test_item["collection"]],
+        "intersects": test_item["geometry"],
+        "datetime": f"{datetime_to_str(item_date_before)}/{datetime_to_str(item_date_after)}",
+    }
+    resp = await app_client.post("/search", json=params)
+    resp_json = resp.json()
+    assert resp_json["features"][0]["id"] == test_item["id"]
+
+
+@pytest.mark.asyncio
 async def test_item_search_temporal_open_window(app_client, ctx):
     """Test POST search with open spatio-temporal query (core)"""
     test_item = ctx.item

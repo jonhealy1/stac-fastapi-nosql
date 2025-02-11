@@ -112,6 +112,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Symlinks from project-specific readme files to main readme [#250](https://github.com/stac-utils/stac-fastapi-elasticsearch-opensearch/pull/250)
 - Support for Python 3.12 [#234](https://github.com/stac-utils/stac-fastapi-elasticsearch/pull/234)
+- Extended Datetime Search to search on start_datetime and end_datetime as well as datetime fields. [#182](https://github.com/stac-utils/stac-fastapi-elasticsearch/pull/182)
 
 ### Changed
 
