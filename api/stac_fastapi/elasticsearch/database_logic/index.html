@@ -1,0 +1,3655 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="STAC FastAPI Elasticsearch and Opensearch backends.">
+      
+      
+      
+      
+        <link rel="prev" href="../config/">
+      
+      
+        <link rel="next" href="../">
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.3">
+    
+    
+      
+        <title>database_logic - stac-fastapi-elasticsearch-opensearch</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.d7758b05.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Nunito Sans";--md-code-font:"Fira Code"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#module-stac_fastapielasticsearchdatabase_logic" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="stac-fastapi-elasticsearch-opensearch" class="md-header__button md-logo" aria-label="stac-fastapi-elasticsearch-opensearch" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            stac-fastapi-elasticsearch-opensearch
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              database_logic
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/stac-utils/stac-fastapi-elasticsearch-opensearch" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    stac-utils/stac-fastapi-elasticsearch-opensearch
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="stac-fastapi-elasticsearch-opensearch" class="md-nav__button md-logo" aria-label="stac-fastapi-elasticsearch-opensearch" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+
+    </a>
+    stac-fastapi-elasticsearch-opensearch
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/stac-utils/stac-fastapi-elasticsearch-opensearch" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    stac-utils/stac-fastapi-elasticsearch-opensearch
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tips-and-tricks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tips and Tricks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    API
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            API
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    stac_fastapi.elasticsearch
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            stac_fastapi.elasticsearch
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    app
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    config
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    database_logic
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    database_logic
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Variables
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Functions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_collection_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_collection_index
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_index_templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_index_templates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_item_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_item_index
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_item_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_item_index
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#index_alias_by_collection_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      index_alias_by_collection_id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#index_by_collection_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      index_by_collection_id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#indices" class="md-nav__link">
+    <span class="md-ellipsis">
+      indices
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mk_actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      mk_actions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mk_item_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      mk_item_id
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Classes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Classes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#databaselogic" class="md-nav__link">
+    <span class="md-ellipsis">
+      DatabaseLogic
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DatabaseLogic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#class-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Class variables
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Static methods
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_bbox_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_bbox_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_collections_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_collections_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_cql2_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_cql2_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_datetime_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_datetime_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_free_text_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_free_text_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_ids_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_ids_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_intersects_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_intersects_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_stacql_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_stacql_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#make_search" class="md-nav__link">
+    <span class="md-ellipsis">
+      make_search
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#populate_sort" class="md-nav__link">
+    <span class="md-ellipsis">
+      populate_sort
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Methods
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aggregate" class="md-nav__link">
+    <span class="md-ellipsis">
+      aggregate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk_async" class="md-nav__link">
+    <span class="md-ellipsis">
+      bulk_async
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk_sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      bulk_sync
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check_collection_exists" class="md-nav__link">
+    <span class="md-ellipsis">
+      check_collection_exists
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_collection" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_collection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_item" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_item
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_collection" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_collection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_collections
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_item" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_item
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_items" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_items
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#execute_search" class="md-nav__link">
+    <span class="md-ellipsis">
+      execute_search
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#find_collection" class="md-nav__link">
+    <span class="md-ellipsis">
+      find_collection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_all_collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_all_collections
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_one_item" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_one_item
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prep_create_item" class="md-nav__link">
+    <span class="md-ellipsis">
+      prep_create_item
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync_prep_create_item" class="md-nav__link">
+    <span class="md-ellipsis">
+      sync_prep_create_item
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update_collection" class="md-nav__link">
+    <span class="md-ellipsis">
+      update_collection
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geometry" class="md-nav__link">
+    <span class="md-ellipsis">
+      Geometry
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Geometry">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ancestors-in-mro" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ancestors (in MRO)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../version/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    version
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    stac_fastapi.opensearch
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            stac_fastapi.opensearch
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../opensearch/app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    app
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../opensearch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../opensearch/config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    config
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../opensearch/database_logic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    database_logic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../opensearch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../opensearch/version/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    version
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    stac_fastapi.core
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            stac_fastapi.core
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/base_database_logic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    base_database_logic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/base_settings/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    base_settings
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/core/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    core
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/datetime_utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    datetime_utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3_6" id="__nav_3_3_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    extensions
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            extensions
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/extensions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    module
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/extensions/filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    filter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/extensions/query/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    query
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3_7" id="__nav_3_3_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    models
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            models
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/models/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    module
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/models/links/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    links
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/models/search/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    search
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/serializers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    serializers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/session/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    session
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/utilities/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    utilities
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core/version/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    version
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../aggregation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Aggregation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Development - Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../release-notes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release Notes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Variables
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Functions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_collection_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_collection_index
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_index_templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_index_templates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_item_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_item_index
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_item_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_item_index
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#index_alias_by_collection_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      index_alias_by_collection_id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#index_by_collection_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      index_by_collection_id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#indices" class="md-nav__link">
+    <span class="md-ellipsis">
+      indices
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mk_actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      mk_actions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mk_item_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      mk_item_id
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Classes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Classes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#databaselogic" class="md-nav__link">
+    <span class="md-ellipsis">
+      DatabaseLogic
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DatabaseLogic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#class-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Class variables
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Static methods
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_bbox_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_bbox_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_collections_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_collections_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_cql2_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_cql2_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_datetime_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_datetime_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_free_text_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_free_text_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_ids_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_ids_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_intersects_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_intersects_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply_stacql_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_stacql_filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#make_search" class="md-nav__link">
+    <span class="md-ellipsis">
+      make_search
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#populate_sort" class="md-nav__link">
+    <span class="md-ellipsis">
+      populate_sort
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Methods
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aggregate" class="md-nav__link">
+    <span class="md-ellipsis">
+      aggregate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk_async" class="md-nav__link">
+    <span class="md-ellipsis">
+      bulk_async
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk_sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      bulk_sync
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check_collection_exists" class="md-nav__link">
+    <span class="md-ellipsis">
+      check_collection_exists
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_collection" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_collection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_item" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_item
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_collection" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_collection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_collections
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_item" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_item
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_items" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_items
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#execute_search" class="md-nav__link">
+    <span class="md-ellipsis">
+      execute_search
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#find_collection" class="md-nav__link">
+    <span class="md-ellipsis">
+      find_collection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_all_collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_all_collections
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_one_item" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_one_item
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prep_create_item" class="md-nav__link">
+    <span class="md-ellipsis">
+      prep_create_item
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sync_prep_create_item" class="md-nav__link">
+    <span class="md-ellipsis">
+      sync_prep_create_item
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update_collection" class="md-nav__link">
+    <span class="md-ellipsis">
+      update_collection
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geometry" class="md-nav__link">
+    <span class="md-ellipsis">
+      Geometry
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Geometry">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ancestors-in-mro" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ancestors (in MRO)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="module-stac_fastapielasticsearchdatabase_logic">Module stac_fastapi.elasticsearch.database_logic<a class="headerlink" href="#module-stac_fastapielasticsearchdatabase_logic" title="Permanent link">&para;</a></h1>
+<p>Database logic.</p>
+<h2 id="variables">Variables<a class="headerlink" href="#variables" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="n">COLLECTIONS_INDEX</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">DEFAULT_SORT</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">ES_COLLECTIONS_MAPPINGS</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">ES_INDEX_NAME_UNSUPPORTED_CHARS</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">ES_ITEMS_MAPPINGS</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">ES_ITEMS_SETTINGS</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">ES_MAPPINGS_DYNAMIC_TEMPLATES</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">ITEMS_INDEX_PREFIX</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">ITEM_INDICES</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">MAX_LIMIT</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">NumType</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">logger</span>
+</code></pre></div>
+<h2 id="functions">Functions<a class="headerlink" href="#functions" title="Permanent link">&para;</a></h2>
+<h3 id="create_collection_index">create_collection_index<a class="headerlink" href="#create_collection_index" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_collection_index</span><span class="p">(</span>
+
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Create the index for a Collection. The settings of the index template will be used implicitly.</p>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<h3 id="create_index_templates">create_index_templates<a class="headerlink" href="#create_index_templates" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_index_templates</span><span class="p">(</span>
+
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Create index templates for the Collection and Item indices.</p>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<h3 id="create_item_index">create_item_index<a class="headerlink" href="#create_item_index" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_item_index</span><span class="p">(</span>
+    <span class="n">collection_id</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Create the index for Items. The settings of the index template will be used implicitly.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>collection_id</td>
+<td>str</td>
+<td>Collection identifier.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<h3 id="delete_item_index">delete_item_index<a class="headerlink" href="#delete_item_index" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_item_index</span><span class="p">(</span>
+    <span class="n">collection_id</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Delete the index for items in a collection.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>collection_id</td>
+<td>str</td>
+<td>The ID of the collection whose items index will be deleted.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<h3 id="index_alias_by_collection_id">index_alias_by_collection_id<a class="headerlink" href="#index_alias_by_collection_id" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">index_alias_by_collection_id</span><span class="p">(</span>
+    <span class="n">collection_id</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</code></pre></div>
+<p>Translate a collection id into an Elasticsearch index alias.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>collection_id</td>
+<td>str</td>
+<td>The collection id to translate into an index alias.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>str</td>
+<td>The index alias derived from the collection id.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="index_by_collection_id">index_by_collection_id<a class="headerlink" href="#index_by_collection_id" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">index_by_collection_id</span><span class="p">(</span>
+    <span class="n">collection_id</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</code></pre></div>
+<p>Translate a collection id into an Elasticsearch index name.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>collection_id</td>
+<td>str</td>
+<td>The collection id to translate into an index name.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>str</td>
+<td>The index name derived from the collection id.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="indices">indices<a class="headerlink" href="#indices" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">indices</span><span class="p">(</span>
+    <span class="n">collection_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</code></pre></div>
+<p>Get a comma-separated string of index names for a given list of collection ids.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>collection_ids</td>
+<td>None</td>
+<td>A list of collection ids.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None</td>
+<td>A string of comma-separated index names. If <code>collection_ids</code> is None, returns the default indices.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mk_actions">mk_actions<a class="headerlink" href="#mk_actions" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mk_actions</span><span class="p">(</span>
+    <span class="n">collection_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">processed_items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">stac_fastapi</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">stac</span><span class="o">.</span><span class="n">Item</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Create Elasticsearch bulk actions for a list of processed items.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>collection_id</td>
+<td>str</td>
+<td>The identifier for the collection the items belong to.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>processed_items</td>
+<td>List[Item]</td>
+<td>The list of processed items to be bulk indexed.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List[Dict[str, Union[str, Dict]]]</td>
+<td>The list of bulk actions to be executed,<br>each action being a dictionary with the following keys:<br>- <code>_index</code>: the index to store the document in.<br>- <code>_id</code>: the document's identifier.<br>- <code>_source</code>: the source of the document.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mk_item_id">mk_item_id<a class="headerlink" href="#mk_item_id" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mk_item_id</span><span class="p">(</span>
+    <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">collection_id</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Create the document id for an Item in Elasticsearch.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>item_id</td>
+<td>str</td>
+<td>The id of the Item.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>collection_id</td>
+<td>str</td>
+<td>The id of the Collection that the Item belongs to.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>str</td>
+<td>The document id for the Item, combining the Item id and the Collection id, separated by a <code>|</code> character.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="classes">Classes<a class="headerlink" href="#classes" title="Permanent link">&para;</a></h2>
+<h3 id="databaselogic">DatabaseLogic<a class="headerlink" href="#databaselogic" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DatabaseLogic</span><span class="p">(</span>
+    <span class="n">item_serializer</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">stac_fastapi</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">serializers</span><span class="o">.</span><span class="n">ItemSerializer</span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="err">&#39;</span><span class="nc">stac_fastapi</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">serializers</span><span class="o">.</span><span class="n">ItemSerializer</span><span class="s1">&#39;&gt;,</span>
+    <span class="n">collection_serializer</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">stac_fastapi</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">serializers</span><span class="o">.</span><span class="n">CollectionSerializer</span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="err">&#39;</span><span class="nc">stac_fastapi</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">serializers</span><span class="o">.</span><span class="n">CollectionSerializer</span><span class="s1">&#39;&gt;,</span>
+    <span class="n">extensions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">NOTHING</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Database logic.</p>
+<h4 id="class-variables">Class variables<a class="headerlink" href="#class-variables" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="n">aggregation_mapping</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">client</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">sync_client</span>
+</code></pre></div>
+<h4 id="static-methods">Static methods<a class="headerlink" href="#static-methods" title="Permanent link">&para;</a></h4>
+<h4 id="apply_bbox_filter">apply_bbox_filter<a class="headerlink" href="#apply_bbox_filter" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">apply_bbox_filter</span><span class="p">(</span>
+    <span class="n">search</span><span class="p">:</span> <span class="n">elasticsearch_dsl</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">Search</span><span class="p">,</span>
+    <span class="n">bbox</span><span class="p">:</span> <span class="n">List</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Filter search results based on bounding box.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>search</td>
+<td>Search</td>
+<td>The search object to apply the filter to.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>bbox</td>
+<td>List</td>
+<td>The bounding box coordinates, represented as a list of four values [minx, miny, maxx, maxy].</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None</td>
+<td>search (Search): The search object with the bounding box filter applied.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="apply_collections_filter">apply_collections_filter<a class="headerlink" href="#apply_collections_filter" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">apply_collections_filter</span><span class="p">(</span>
+    <span class="n">search</span><span class="p">:</span> <span class="n">elasticsearch_dsl</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">Search</span><span class="p">,</span>
+    <span class="n">collection_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Database logic to search a list of STAC collection ids.</p>
+<h4 id="apply_cql2_filter">apply_cql2_filter<a class="headerlink" href="#apply_cql2_filter" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">apply_cql2_filter</span><span class="p">(</span>
+    <span class="n">search</span><span class="p">:</span> <span class="n">elasticsearch_dsl</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">Search</span><span class="p">,</span>
+    <span class="n">_filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Apply a CQL2 filter to an Elasticsearch Search object.</p>
+<p>This method transforms a dictionary representing a CQL2 filter into an Elasticsearch query
+and applies it to the provided Search object. If the filter is None, the original Search
+object is returned unmodified.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>search</td>
+<td>Search</td>
+<td>The Elasticsearch Search object to which the filter will be applied.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>_filter</td>
+<td>Optional[Dict[str, Any]]</td>
+<td>The filter in dictionary form that needs to be applied<br>to the search. The dictionary should follow the structure<br>required by the <code>to_es</code> function which converts it<br>to an Elasticsearch query.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Search</td>
+<td>The modified Search object with the filter applied if a filter is provided,<br>otherwise the original Search object.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="apply_datetime_filter">apply_datetime_filter<a class="headerlink" href="#apply_datetime_filter" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">apply_datetime_filter</span><span class="p">(</span>
+    <span class="n">search</span><span class="p">:</span> <span class="n">elasticsearch_dsl</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">Search</span><span class="p">,</span>
+    <span class="n">datetime_search</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Apply a filter to search based on datetime field.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>search</td>
+<td>Search</td>
+<td>The search object to filter.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>datetime_search</td>
+<td>dict</td>
+<td>The datetime filter criteria.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Search</td>
+<td>The filtered search object.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="apply_free_text_filter">apply_free_text_filter<a class="headerlink" href="#apply_free_text_filter" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">apply_free_text_filter</span><span class="p">(</span>
+    <span class="n">search</span><span class="p">:</span> <span class="n">elasticsearch_dsl</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">Search</span><span class="p">,</span>
+    <span class="n">free_text_queries</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Database logic to perform query for search endpoint.</p>
+<h4 id="apply_ids_filter">apply_ids_filter<a class="headerlink" href="#apply_ids_filter" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">apply_ids_filter</span><span class="p">(</span>
+    <span class="n">search</span><span class="p">:</span> <span class="n">elasticsearch_dsl</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">Search</span><span class="p">,</span>
+    <span class="n">item_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Database logic to search a list of STAC item ids.</p>
+<h4 id="apply_intersects_filter">apply_intersects_filter<a class="headerlink" href="#apply_intersects_filter" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">apply_intersects_filter</span><span class="p">(</span>
+    <span class="n">search</span><span class="p">:</span> <span class="n">elasticsearch_dsl</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">Search</span><span class="p">,</span>
+    <span class="n">intersects</span><span class="p">:</span> <span class="n">stac_fastapi</span><span class="o">.</span><span class="n">elasticsearch</span><span class="o">.</span><span class="n">database_logic</span><span class="o">.</span><span class="n">Geometry</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Filter search results based on intersecting geometry.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>search</td>
+<td>Search</td>
+<td>The search object to apply the filter to.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>intersects</td>
+<td>Geometry</td>
+<td>The intersecting geometry, represented as a GeoJSON-like object.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None</td>
+<td>search (Search): The search object with the intersecting geometry filter applied.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="apply_stacql_filter">apply_stacql_filter<a class="headerlink" href="#apply_stacql_filter" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">apply_stacql_filter</span><span class="p">(</span>
+    <span class="n">search</span><span class="p">:</span> <span class="n">elasticsearch_dsl</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">Search</span><span class="p">,</span>
+    <span class="n">op</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Filter search results based on a comparison between a field and a value.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>search</td>
+<td>Search</td>
+<td>The search object to apply the filter to.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>op</td>
+<td>str</td>
+<td>The comparison operator to use. Can be 'eq' (equal), 'gt' (greater than), 'gte' (greater than or equal),<br>'lt' (less than), or 'lte' (less than or equal).</td>
+<td>None</td>
+</tr>
+<tr>
+<td>field</td>
+<td>str</td>
+<td>The field to perform the comparison on.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>value</td>
+<td>float</td>
+<td>The value to compare the field against.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None</td>
+<td>search (Search): The search object with the specified filter applied.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="make_search">make_search<a class="headerlink" href="#make_search" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">make_search</span><span class="p">(</span>
+
+<span class="p">)</span>
+</code></pre></div>
+<p>Database logic to create a Search instance.</p>
+<h4 id="populate_sort">populate_sort<a class="headerlink" href="#populate_sort" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">populate_sort</span><span class="p">(</span>
+    <span class="n">sortby</span><span class="p">:</span> <span class="n">List</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">NoneType</span><span class="p">]</span>
+</code></pre></div>
+<p>Database logic to sort search instance.</p>
+<h4 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">&para;</a></h4>
+<h4 id="aggregate">aggregate<a class="headerlink" href="#aggregate" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">aggregate</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">collection_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">],</span>
+    <span class="n">aggregations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">search</span><span class="p">:</span> <span class="n">elasticsearch_dsl</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">Search</span><span class="p">,</span>
+    <span class="n">centroid_geohash_grid_precision</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">centroid_geohex_grid_precision</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">centroid_geotile_grid_precision</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">geometry_geohash_grid_precision</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">geometry_geotile_grid_precision</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">datetime_frequency_interval</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">ignore_unavailable</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Return aggregations of STAC Items.</p>
+<h4 id="bulk_async">bulk_async<a class="headerlink" href="#bulk_async" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bulk_async</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">collection_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">processed_items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">stac_fastapi</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">stac</span><span class="o">.</span><span class="n">Item</span><span class="p">],</span>
+    <span class="n">refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Perform a bulk insert of items into the database asynchronously.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>self</td>
+<td>None</td>
+<td>The instance of the object calling this function.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>collection_id</td>
+<td>str</td>
+<td>The ID of the collection to which the items belong.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>processed_items</td>
+<td>List[Item]</td>
+<td>A list of <code>Item</code> objects to be inserted into the database.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>refresh</td>
+<td>bool</td>
+<td>Whether to refresh the index after the bulk insert (default: False).</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<h4 id="bulk_sync">bulk_sync<a class="headerlink" href="#bulk_sync" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bulk_sync</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">collection_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">processed_items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">stac_fastapi</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">stac</span><span class="o">.</span><span class="n">Item</span><span class="p">],</span>
+    <span class="n">refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Perform a bulk insert of items into the database synchronously.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>self</td>
+<td>None</td>
+<td>The instance of the object calling this function.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>collection_id</td>
+<td>str</td>
+<td>The ID of the collection to which the items belong.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>processed_items</td>
+<td>List[Item]</td>
+<td>A list of <code>Item</code> objects to be inserted into the database.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>refresh</td>
+<td>bool</td>
+<td>Whether to refresh the index after the bulk insert (default: False).</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<h4 id="check_collection_exists">check_collection_exists<a class="headerlink" href="#check_collection_exists" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_collection_exists</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">collection_id</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Database logic to check if a collection exists.</p>
+<h4 id="create_collection">create_collection<a class="headerlink" href="#create_collection" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_collection</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">collection</span><span class="p">:</span> <span class="n">stac_fastapi</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">stac</span><span class="o">.</span><span class="n">Collection</span><span class="p">,</span>
+    <span class="n">refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Create a single collection in the database.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>collection</td>
+<td>Collection</td>
+<td>The Collection object to be created.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>refresh</td>
+<td>bool</td>
+<td>Whether to refresh the index after the creation. Default is False.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Raises:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ConflictError</td>
+<td>If a Collection with the same id already exists in the database.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="create_item">create_item<a class="headerlink" href="#create_item" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_item</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">item</span><span class="p">:</span> <span class="n">stac_fastapi</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">stac</span><span class="o">.</span><span class="n">Item</span><span class="p">,</span>
+    <span class="n">refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Database logic for creating one item.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>item</td>
+<td>Item</td>
+<td>The item to be created.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>refresh</td>
+<td>bool</td>
+<td>Refresh the index after performing the operation. Defaults to False.</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Raises:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ConflictError</td>
+<td>If the item already exists in the database.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="delete_collection">delete_collection<a class="headerlink" href="#delete_collection" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_collection</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">collection_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Delete a collection from the database.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>self</td>
+<td>None</td>
+<td>The instance of the object calling this function.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>collection_id</td>
+<td>str</td>
+<td>The ID of the collection to be deleted.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>refresh</td>
+<td>bool</td>
+<td>Whether to refresh the index after the deletion (default: False).</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Raises:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NotFoundError</td>
+<td>If the collection with the given <code>collection_id</code> is not found in the database.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="delete_collections">delete_collections<a class="headerlink" href="#delete_collections" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_collections</span><span class="p">(</span>
+    <span class="bp">self</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Danger. this is only for tests.</p>
+<h4 id="delete_item">delete_item<a class="headerlink" href="#delete_item" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_item</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">collection_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Delete a single item from the database.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>item_id</td>
+<td>str</td>
+<td>The id of the Item to be deleted.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>collection_id</td>
+<td>str</td>
+<td>The id of the Collection that the Item belongs to.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>refresh</td>
+<td>bool</td>
+<td>Whether to refresh the index after the deletion. Default is False.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Raises:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NotFoundError</td>
+<td>If the Item does not exist in the database.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="delete_items">delete_items<a class="headerlink" href="#delete_items" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_items</span><span class="p">(</span>
+    <span class="bp">self</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Danger. this is only for tests.</p>
+<h4 id="execute_search">execute_search<a class="headerlink" href="#execute_search" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">execute_search</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">search</span><span class="p">:</span> <span class="n">elasticsearch_dsl</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">Search</span><span class="p">,</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">token</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">],</span>
+    <span class="n">sort</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">NoneType</span><span class="p">],</span>
+    <span class="n">collection_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">],</span>
+    <span class="n">ignore_unavailable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]]</span>
+</code></pre></div>
+<p>Execute a search query with limit and other optional parameters.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>search</td>
+<td>Search</td>
+<td>The search query to be executed.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>int</td>
+<td>The maximum number of results to be returned.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>token</td>
+<td>Optional[str]</td>
+<td>The token used to return the next set of results.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>sort</td>
+<td>Optional[Dict[str, Dict[str, str]]]</td>
+<td>Specifies how the results should be sorted.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>collection_ids</td>
+<td>Optional[List[str]]</td>
+<td>The collection ids to search.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>ignore_unavailable</td>
+<td>bool</td>
+<td>Whether to ignore unavailable collections. Defaults to True.</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tuple[Iterable[Dict[str, Any]], Optional[int], Optional[str]]</td>
+<td>A tuple containing:<br>- An iterable of search results, where each result is a dictionary with keys and values representing the<br>fields and values of each document.<br>- The total number of results (if the count could be computed), or None if the count could not be<br>computed.<br>- The token to be used to retrieve the next set of results, or None if there are no more results.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Raises:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NotFoundError</td>
+<td>If the collections specified in <code>collection_ids</code> do not exist.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="find_collection">find_collection<a class="headerlink" href="#find_collection" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">find_collection</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">collection_id</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">stac_fastapi</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">stac</span><span class="o">.</span><span class="n">Collection</span>
+</code></pre></div>
+<p>Find and return a collection from the database.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>self</td>
+<td>None</td>
+<td>The instance of the object calling this function.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>collection_id</td>
+<td>str</td>
+<td>The ID of the collection to be found.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Collection</td>
+<td>The found collection, represented as a <code>Collection</code> object.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Raises:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NotFoundError</td>
+<td>If the collection with the given <code>collection_id</code> is not found in the database.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="get_all_collections">get_all_collections<a class="headerlink" href="#get_all_collections" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_all_collections</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">token</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">],</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">request</span><span class="p">:</span> <span class="n">starlette</span><span class="o">.</span><span class="n">requests</span><span class="o">.</span><span class="n">Request</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]]</span>
+</code></pre></div>
+<p>Retrieve a list of all collections from Elasticsearch, supporting pagination.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>token</td>
+<td>Optional[str]</td>
+<td>The pagination token.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>int</td>
+<td>The number of results to return.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None</td>
+<td>A tuple of (collections, next pagination token if any).</td>
+</tr>
+</tbody>
+</table>
+<h4 id="get_one_item">get_one_item<a class="headerlink" href="#get_one_item" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_one_item</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">collection_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span>
+</code></pre></div>
+<p>Retrieve a single item from the database.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>collection_id</td>
+<td>str</td>
+<td>The id of the Collection that the Item belongs to.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>item_id</td>
+<td>str</td>
+<td>The id of the Item.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None</td>
+<td>item (Dict): A dictionary containing the source data for the Item.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Raises:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NotFoundError</td>
+<td>If the specified Item does not exist in the Collection.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="prep_create_item">prep_create_item<a class="headerlink" href="#prep_create_item" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">prep_create_item</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">item</span><span class="p">:</span> <span class="n">stac_fastapi</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">stac</span><span class="o">.</span><span class="n">Item</span><span class="p">,</span>
+    <span class="n">base_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">exist_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">stac_fastapi</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">stac</span><span class="o">.</span><span class="n">Item</span>
+</code></pre></div>
+<p>Preps an item for insertion into the database.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>item</td>
+<td>Item</td>
+<td>The item to be prepped for insertion.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>base_url</td>
+<td>str</td>
+<td>The base URL used to create the item's self URL.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>exist_ok</td>
+<td>bool</td>
+<td>Indicates whether the item can exist already.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Item</td>
+<td>The prepped item.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Raises:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ConflictError</td>
+<td>If the item already exists in the database.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="sync_prep_create_item">sync_prep_create_item<a class="headerlink" href="#sync_prep_create_item" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sync_prep_create_item</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">item</span><span class="p">:</span> <span class="n">stac_fastapi</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">stac</span><span class="o">.</span><span class="n">Item</span><span class="p">,</span>
+    <span class="n">base_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">exist_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">stac_fastapi</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">stac</span><span class="o">.</span><span class="n">Item</span>
+</code></pre></div>
+<p>Prepare an item for insertion into the database.</p>
+<p>This method performs pre-insertion preparation on the given <code>item</code>,
+such as checking if the collection the item belongs to exists,
+and optionally verifying that an item with the same ID does not already exist in the database.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>item</td>
+<td>Item</td>
+<td>The item to be inserted into the database.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>base_url</td>
+<td>str</td>
+<td>The base URL used for constructing URLs for the item.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>exist_ok</td>
+<td>bool</td>
+<td>Indicates whether the item can exist already.</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Item</td>
+<td>The item after preparation is done.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Raises:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NotFoundError</td>
+<td>If the collection that the item belongs to does not exist in the database.</td>
+</tr>
+<tr>
+<td>ConflictError</td>
+<td>If an item with the same ID already exists in the collection.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="update_collection">update_collection<a class="headerlink" href="#update_collection" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_collection</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">collection_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">collection</span><span class="p">:</span> <span class="n">stac_fastapi</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">stac</span><span class="o">.</span><span class="n">Collection</span><span class="p">,</span>
+    <span class="n">refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Update a collection from the database.</p>
+<p>Args:
+    self: The instance of the object calling this function.
+    collection_id (str): The ID of the collection to be updated.
+    collection (Collection): The Collection object to be used for the update.</p>
+<p>Raises:
+    NotFoundError: If the collection with the given <code>collection_id</code> is not
+    found in the database.</p>
+<p>Notes:
+    This function updates the collection in the database using the specified
+    <code>collection_id</code> and with the collection specified in the <code>Collection</code> object.
+    If the collection is not found, a <code>NotFoundError</code> is raised.</p>
+<h3 id="geometry">Geometry<a class="headerlink" href="#geometry" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Geometry</span><span class="p">(</span>
+    <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Base class for protocol classes.</p>
+<p>Protocol classes are defined as::</p>
+<div class="codehilite"><pre><span></span><code>class Proto(Protocol):
+    def meth(self) -&gt; int:
+        ...
+</code></pre></div>
+
+<p>Such classes are primarily used with static type checkers that recognize
+structural subtyping (static duck-typing), for example::</p>
+<div class="codehilite"><pre><span></span><code>class C:
+    def meth(self) -&gt; int:
+        return 0
+
+def func(x: Proto) -&gt; int:
+    return x.meth()
+
+func(C())  # Passes static type check
+</code></pre></div>
+
+<p>See PEP 544 for details. Protocol classes decorated with</p>
+<h4 id="ancestors-in-mro">Ancestors (in MRO)<a class="headerlink" href="#ancestors-in-mro" title="Permanent link">&para;</a></h4>
+<ul>
+<li>typing.Protocol</li>
+<li>typing.Generic</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/stac-utils" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../../..", "features": [], "search": "../../../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.f1b6f286.min.js"></script>
+      
+    
+  </body>
+</html>
